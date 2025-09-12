@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Anti-Harcèlement Scolaire</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg">
+    <div id="app" class="container mx-auto px-4 py-8">
+        <!-- Page d'accueil -->
+        <div id="homePage" class="max-w-4xl mx-auto">
+            <div class="bg-white rounded-lg card-shadow p-8 mb-8">
+                <div class="text-center mb-8">
+                    <div id="logoContainer" class="mb-6">
+                        <div class="w-24 h-24 mx-auto bg-blue-100 rounded-full flex items-center justify-center">
+                            <svg class="w-12 h-12 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h1 id="schoolTitle" class="text-xl font-bold text-gray-800 mb-4">Application Anti-Harcèlement Scolaire</h1>
+                    <p class="text-lg text-gray-600">Plateforme sécurisée de signalement et de gestion</p>
+                </div>
+
+                <!-- Informations légales -->
+                <div class="bg-red-50 border-l-4 border-red-400 p-6 mb-8">
+                    <h2 class="text-xl font-semibold text-red-800 mb-4">⚠️ Rappel à la loi et informations importantes</h2>
+                    <div class="text-red-700 space-y-2">
+                        <p><strong>Article 222-33-2-2 du Code pénal :</strong> Le harcèlement scolaire est un délit puni de 3 ans d'emprisonnement et 45 000€ d'amende.</p>
+                        <p><strong>Numéro d'urgence :</strong> 3020 (Numéro national "Non au harcèlement")</p>
+                        <p><strong>Cyberharcèlement :</strong> 3018 (Numéro national gratuit)</p>
+                        <p><strong>Urgence :</strong> 15 (SAMU) - 17 (Police) - 18 (Pompiers) - 112 (Urgences européennes)</p>
+                        <p class="text-sm mt-4">Cette application respecte le RGPD. Vos données sont protégées et utilisées uniquement dans le cadre de la lutte contre le harcèlement scolaire.</p>
+                    </div>
+                </div>
+
+                <!-- Boutons principaux -->
+                <div class="grid md:grid-cols-1 gap-6 max-w-sm mx-auto">
+                    <button onclick="showStudentLogin()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-6 px-6 rounded-lg transition duration-300 transform hover:scale-105">
+                        <div class="text-center">
+                            <svg class="w-12 h-12 mx-auto mb-3" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"/>
+                            </svg>
+                            <div class="text-lg">Signaler une situation</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page de connexion élève -->
+        <div id="studentLoginPage" class="hidden max-w-md mx-auto">
+            <div class="bg-white rounded-lg card-shadow p-8">
+                <button onclick="showHome()" class="mb-6 text-blue-600 hover:text-blue-800 flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+                    </svg>
+                    Retour
+                </button>
+                
+                <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Connexion Élève</h2>
+                
+                <form id="studentLoginForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Identifiant (fourni par le collège)</label>
+                        <input type="text" id="studentId" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="nom.prenom" required>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Classe</label>
+                        <select id="studentClass" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">Sélectionner votre classe</option>
+                            <option value="6G1">6G1</option>
+                            <option value="6G2">6G2</option>
+                            <option value="6G3">6G3</option>
+                            <option value="6G4">6G4</option>
+                            <option value="6G5">6G5</option>
+                            <option value="6G6">6G6</option>
+                            <option value="6G7">6G7</option>
+                            <option value="6G8">6G8</option>
+                            <option value="6G9">6G9</option>
+                            <option value="5G1">5G1</option>
+                            <option value="5G2">5G2</option>
+                            <option value="5G3">5G3</option>
+                            <option value="5G4">5G4</option>
+                            <option value="5G5">5G5</option>
+                            <option value="5G6">5G6</option>
+                            <option value="5G7">5G7</option>
+                            <option value="5G8">5G8</option>
+                            <option value="5G9">5G9</option>
+                            <option value="4G1">4G1</option>
+                            <option value="4G2">4G2</option>
+                            <option value="4G3">4G3</option>
+                            <option value="4G4">4G4</option>
+                            <option value="4G5">4G5</option>
+                            <option value="4G6">4G6</option>
+                            <option value="4G7">4G7</option>
+                            <option value="4G8">4G8</option>
+                            <option value="4G9">4G9</option>
+                            <option value="3G1">3G1</option>
+                            <option value="3G2">3G2</option>
+                            <option value="3G3">3G3</option>
+                            <option value="3G4">3G4</option>
+                            <option value="3G5">3G5</option>
+                            <option value="3G6">3G6</option>
+                            <option value="3G7">3G7</option>
+                            <option value="3G8">3G8</option>
+                            <option value="3G9">3G9</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Mot de passe provisoire</label>
+                        <input type="password" id="studentTempPassword" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300">
+                        Se connecter
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Page de signalement élève -->
+        <div id="studentReportPage" class="hidden max-w-2xl mx-auto">
+            <div class="bg-white rounded-lg card-shadow p-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">Signaler une situation</h2>
+                    <button onclick="studentLogout()" class="text-red-600 hover:text-red-800">Déconnexion</button>
+                </div>
+                
+                <form id="reportForm" class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Vous êtes :</label>
+                        <div class="space-y-2">
+                            <label class="flex items-center">
+                                <input type="radio" name="role" value="victime" class="mr-2" required>
+                                <span>Victime de harcèlement</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="radio" name="role" value="temoin" class="mr-2" required>
+                                <span>Témoin de harcèlement</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Lieu des faits</label>
+                        <select id="location" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">Sélectionner le lieu</option>
+                            <option value="cour">Cour de récréation</option>
+                            <option value="classe">Salle de classe</option>
+                            <option value="couloir">Couloirs</option>
+                            <option value="cantine">Cantine</option>
+                            <option value="toilettes">Toilettes</option>
+                            <option value="transport">Transport scolaire</option>
+                            <option value="internet">Internet/Réseaux sociaux</option>
+                            <option value="autre">Autre</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Fréquence</label>
+                        <select id="frequency" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <option value="">Sélectionner la fréquence</option>
+                            <option value="quotidien">Tous les jours</option>
+                            <option value="hebdomadaire">Plusieurs fois par semaine</option>
+                            <option value="occasionnel">De temps en temps</option>
+                            <option value="unique">Une seule fois</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Description de la situation</label>
+                        <textarea id="description" rows="6" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Décrivez la situation de harcèlement..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-md transition duration-300">
+                        Envoyer le signalement
+                    </button>
+                </form>
+            </div>
+        </div>
+
+
+        <!-- Modal pour choisir un nouveau mot de passe -->
+        <div id="setNewPasswordModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div class="bg-white rounded-lg p-8 max-w-md mx-4 shadow-2xl">
+                <h3 class="text-2xl font-bold text-gray-800 mb-4 text-center">Créez votre mot de passe personnel</h3>
+                <p class="text-gray-600 mb-6 text-center">Ce mot de passe remplacera votre mot de passe provisoire. Choisissez-le bien et ne l'oubliez pas.</p>
+                
+                <form id="setNewPasswordForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nouveau mot de passe</label>
+                        <input type="password" id="newPassword" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Confirmez le mot de passe</label>
+                        <input type="password" id="confirmPassword" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-md transition duration-300">
+                        Enregistrer et se connecter
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // CONFIGURATION INITIALE - À MODIFIER AVANT DIFFUSION
+        // ========================================
+        const INITIAL_CONFIG = {
+            schoolName: "Collège [NOM DE VOTRE ÉTABLISSEMENT]", // Changez le nom ici
+            referentEmails: [
+                "didierboivin81@mail.com",
+                "referent2@email.com",
+                "referent3@email.com",
+                "referent4@email.com",
+                "referent1@email.com",
+                "referent2@email.com",
+            ],
+            initialStudents: `
+                // Collez vos listes d'élèves ici, au format : identifiant [TAB] classe [TAB] motdepasse
+                test.test	6G1	Test123
+                martin.jean 6G1 mdpjean123
+                dupont.marie 6G2 mdpmarie456
+                // Exemple :
+                // martin.jean	6G1	mdpjean123
+                // dupont.marie	6G2	mdpmarie456
+            `
+        };
+
+        // ========================================
+        // VARIABLES GLOBALES
+        // ========================================
+        let currentUser = null;
+        let studentsList = [];
+
+        // ========================================
+        // INITIALISATION
+        // ========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApplication();
+            setupEventListeners();
+        });
+
+        function initializeApplication() {
+            // Charger les données ou initialiser avec la configuration par défaut
+            loadData();
+            
+            // Appliquer la configuration initiale si c'est la première fois ou si la liste est vide
+            if (!localStorage.getItem('appInitialized') || studentsList.length === 0) {
+                applyInitialConfiguration();
+                localStorage.setItem('appInitialized', 'true');
+            }
+            
+            // Mettre à jour l'affichage
+            updateDisplay();
+        }
+
+        function applyInitialConfiguration() {
+            // Appliquer le nom de l'établissement
+            if (INITIAL_CONFIG.schoolName && INITIAL_CONFIG.schoolName !== "Collège [Créé par les 3ème 24/25]") {
+                localStorage.setItem('schoolName', INITIAL_CONFIG.schoolName);
+            }
+            
+            // Ajouter les élèves initiaux
+            const initialStudentsParsed = parseInitialStudents(INITIAL_CONFIG.initialStudents);
+            if (initialStudentsParsed.length > 0) {
+                studentsList = [...initialStudentsParsed];
+                localStorage.setItem('studentsList', JSON.stringify(studentsList));
+            }
+        }
+
+        function loadData() {
+            // Charger les données depuis localStorage
+            const savedStudents = localStorage.getItem('studentsList');
+            if (savedStudents) {
+                studentsList = JSON.parse(savedStudents);
+            }
+        }
+
+        function updateDisplay() {
+            // Mettre à jour le nom de l'établissement
+            const savedSchoolName = localStorage.getItem('schoolName');
+            if (savedSchoolName) {
+                document.getElementById('schoolTitle').textContent = savedSchoolName;
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('studentsList', JSON.stringify(studentsList));
+        }
+
+
+        function setupEventListeners() {
+            // Formulaire de connexion élève
+            document.getElementById('studentLoginForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleStudentLogin();
+            });
+
+            // Formulaire de signalement
+            document.getElementById('reportForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleReport();
+            });
+
+            // Formulaire de choix de nouveau mot de passe
+            document.getElementById('setNewPasswordForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                handleSetNewPassword();
+            });
+        }
+
+        // Navigation
+        function showHome() {
+            hideAllPages();
+            document.getElementById('homePage').classList.remove('hidden');
+        }
+
+        function showStudentLogin() {
+            hideAllPages();
+            document.getElementById('studentLoginPage').classList.remove('hidden');
+        }
+
+        function hideAllPages() {
+            const pages = ['homePage', 'studentLoginPage', 'studentReportPage'];
+            pages.forEach(pageId => {
+                const page = document.getElementById(pageId);
+                if (page) {
+                    page.classList.add('hidden');
+                }
+            });
+        }
+
+        // Gestion des connexions
+        function handleStudentLogin() {
+            const studentId = document.getElementById('studentId').value.trim().toLowerCase();
+            const studentClass = document.getElementById('studentClass').value;
+            const passwordAttempt = document.getElementById('studentTempPassword').value.trim();
+
+            // 1. Vérifier si l'utilisateur essaie de se connecter avec le mot de passe provisoire
+            const studentWithTemp = studentsList.find(s => 
+                s.id.toLowerCase() === studentId && 
+                s.class === studentClass && 
+                s.tempPassword === passwordAttempt
+            );
+
+            if (studentWithTemp) {
+                // --- DEBUG ALERT ---
+                alert('DEBUG INFO:\n' + JSON.stringify(studentWithTemp, null, 2));
+                // --- END DEBUG ---
+
+                if (!studentWithTemp.password) {
+                    // CAS 1: Connexion pour la première fois, réussie.
+                    // L'utilisateur doit maintenant définir un mot de passe personnel.
+                    currentUser = studentWithTemp;
+                    showSetNewPasswordModal();
+                    return; // On arrête le processus ici.
+                } else {
+                    // CAS 2: Le mot de passe provisoire est correct, mais un mot de passe personnel existe déjà.
+                    // L'utilisateur essaie de réutiliser le mot de passe provisoire.
+                    alert('❌ MOT DE PASSE PROVISOIRE EXPIRÉ\n\n' +
+                          'Vous avez déjà défini un mot de passe personnel.\n' +
+                          'Veuillez utiliser votre mot de passe PERSONNEL pour vous connecter.');
+                    return; // On arrête le processus ici.
+                }
+            }
+
+            // 2. Si le mot de passe provisoire n'a pas fonctionné, vérifier avec le mot de passe personnel
+            const studentWithPersonal = studentsList.find(s => 
+                s.id.toLowerCase() === studentId && 
+                s.class === studentClass && 
+                s.password === passwordAttempt
+            );
+
+            if (studentWithPersonal) {
+                // CAS 3: Connexion avec le mot de passe personnel, réussie.
+                currentUser = studentWithPersonal;
+                hideAllPages();
+                document.getElementById('studentReportPage').classList.remove('hidden');
+            } else {
+                // CAS 4: Échec total. Ni le mot de passe provisoire ni le personnel n'ont fonctionné.
+                alert('❌ CONNEXION ÉCHOUÉE\n\n' +
+                      'Identifiant, classe ou mot de passe incorrect.\n\n' +
+                      '🔑 RAPPEL :\n' +
+                      '• Si c\'est votre première connexion, utilisez le mot de passe PROVISOIRE.\n' +
+                      '• Sinon, utilisez votre mot de passe PERSONNEL.\n\n' +
+                      '❓ Si vous avez oublié votre mot de passe personnel, contactez le référent Phare.');
+            }
+        }
+
+        function parseInitialStudents(studentString) {
+            const students = [];
+            const lines = studentString.trim().split('\n');
+
+            lines.forEach(line => {
+                const trimmedLine = line.trim();
+                if (trimmedLine.startsWith('//') || trimmedLine === '') {
+                    return; // Ignorer les commentaires et les lignes vides
+                }
+
+                const parts = trimmedLine.split(/\s+/).map(part => part.trim());
+                if (parts.length === 3) {
+                    students.push({
+                        id: parts[0],
+                        class: parts[1],
+                        tempPassword: parts[2],
+                        password: null
+                    });
+                }
+            });
+            return students;
+        }
+
+        // Gestion des signalements
+        function handleReport() {
+            const role = document.querySelector('input[name="role"]:checked').value;
+            const location = document.getElementById('location').value;
+            const frequency = document.getElementById('frequency').value;
+            const description = document.getElementById('description').value;
+            const reportDate = new Date().toLocaleDateString('fr-FR');
+
+            // Préparer et envoyer l'email
+            const emails = INITIAL_CONFIG.referentEmails.filter(e => e && !e.startsWith('referent'));
+
+            if (emails.length > 0) {
+                const to = emails.join(',');
+                const subject = "Signalement Phare";
+                
+                const body = `
+Nouveau signalement reçu :
+
+-----------------------------------
+INFORMATIONS SUR LE SIGNALEMENT
+-----------------------------------
+- Signalé par : ${currentUser.id}
+- Classe : ${currentUser.class}
+- Rôle déclaré : ${role}
+- Date : ${reportDate}
+- Lieu des faits : ${location}
+- Fréquence : ${frequency}
+
+-----------------------------------
+DESCRIPTION DE LA SITUATION
+-----------------------------------
+${description}
+
+-----------------------------------
+Ceci est un message automatique généré par l'application Anti-Harcèlement.
+                `.trim();
+
+                const mailtoLink = `mailto:${to}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                
+                alert('Signalement envoyé ! Votre application d\'email va s\'ouvrir pour que vous puissiez envoyer le rapport. N\'oubliez pas d\'appuyer sur \'Envoyer\'.');
+                
+                window.location.href = mailtoLink;
+            } else {
+                alert('Aucune adresse email de référent n\'a été configurée. Le signalement ne peut pas être envoyé.');
+            }
+
+            document.getElementById('reportForm').reset();
+            studentLogout(); // Déconnexion après envoi
+        }
+
+        // Déconnexions
+        function studentLogout() {
+            currentUser = null;
+            showHome();
+        }
+
+        // Gestion du modal de choix de mot de passe
+        function showSetNewPasswordModal() {
+            hideAllPages();
+            document.getElementById('setNewPasswordModal').classList.remove('hidden');
+        }
+
+        function handleSetNewPassword() {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            if (!newPassword || !confirmPassword) {
+                alert('Veuillez remplir les deux champs de mot de passe.');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                alert('Les mots de passe ne correspondent pas. Veuillez réessayer.');
+                return;
+            }
+            
+            // Mettre à jour le mot de passe de l'élève
+            currentUser.password = newPassword;
+            
+            // Sauvegarder les données
+            saveData();
+            
+            // Cacher le modal
+            document.getElementById('setNewPasswordModal').classList.add('hidden');
+            
+            // Connecter l'élève à la page de signalement
+            hideAllPages();
+            document.getElementById('studentReportPage').classList.remove('hidden');
+            
+            alert('Votre nouveau mot de passe a été enregistré avec succès ! Vous êtes maintenant connecté.');
+        }
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'97282c92b7112a19',t:'MTc1NTc1ODc5NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

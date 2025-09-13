@@ -1,53 +1,150 @@
-// --- Parse amélioré et plus robuste ---
-function parseInitialStudents(studentString) {
-  const students = [];
-  const lines = studentString.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('//'));
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Application Collège</title>
+  <script>
+    // --- Configuration initiale ---
+    const INITIAL_CONFIG = {
+      schoolName: "Collège Exemple",
+      initialStudents: `
+        test.test 6G1 Test123
+      `
+    };
+    const DEFAULT_LOGO_BASE64 = "";
 
-  lines.forEach(line => {
-    // supporter tab, espaces multiples, ou virgule comme séparateur
-    const parts = line.split(/\s+|,/).map(p => p.trim()).filter(Boolean);
-    if (parts.length >= 3) {
-      const id = parts[0].toLowerCase();         // normaliser l'ID en minuscule
-      const clazz = parts[1];
-      const temp = parts[2].trim();             // enlever espaces invisibles
-      students.push({
-        id: id,
-        class: clazz,
-        tempPassword: temp,
-        password: null
+    let studentsList = [];
+
+    // --- Parse robuste ---
+    function parseInitialStudents(studentString) {
+      const students = [];
+      const lines = studentString.split("\n").map(l => l.trim()).filter(l => l && !l.startsWith("//"));
+      lines.forEach(line => {
+        const parts = line.split(/\s+|,/).map(p => p.trim()).filter(Boolean);
+        if (parts.length >= 3) {
+          students.push({
+            id: parts[0].toLowerCase(),
+            class: parts[1],
+            tempPassword: parts[2],
+            password: null
+          });
+        } else {
+          console.warn("Ligne ignorée:", line);
+        }
       });
-    } else {
-      console.warn('Ligne élève ignorée (format incorrect) :', line);
+      console.log("parseInitialStudents ->", students);
+      return students;
     }
-  });
 
-  console.log('parseInitialStudents ->', students);
-  return students;
-}
+    // --- Init app ---
+    function applyInitialConfiguration() {
+      if (INITIAL_CONFIG.schoolName) {
+        localStorage.setItem("schoolName", INITIAL_CONFIG.schoolName);
+      }
+      if (DEFAULT_LOGO_BASE64) {
+        localStorage.setItem("schoolLogo", DEFAULT_LOGO_BASE64);
+      }
+      const initialStudentsParsed = parseInitialStudents(INITIAL_CONFIG.initialStudents);
+      if (initialStudentsParsed.length > 0) {
+        const existing = JSON.parse(localStorage.getItem("studentsList") || "[]");
+        initialStudentsParsed.forEach(s => {
+          const exists = existing.some(e => e.id === s.id && e.class === s.class);
+          if (!exists) existing.push(s);
+        });
+        studentsList = existing;
+        localStorage.setItem("studentsList", JSON.stringify(studentsList));
+      }
+    }
 
-// --- Appliquer la config initiale : merge si déjà des élèves (évite écrasement non voulu) ---
-function applyInitialConfiguration() {
-  // Nom & logo inchangés...
-  if (INITIAL_CONFIG.schoolName && INITIAL_CONFIG.schoolName !== "Collège [NOM DE VOTRE ÉTABLISSEMENT]") {
-    localStorage.setItem('schoolName', INITIAL_CONFIG.schoolName);
-  }
-  if (DEFAULT_LOGO_BASE64) {
-    localStorage.setItem('schoolLogo', DEFAULT_LOGO_BASE64);
-  }
+    function resetApplication() {
+      localStorage.clear();
+      location.reload();
+    }
 
-  // Ajouter les élèves initiaux (sans dupliquer)
-  const initialStudentsParsed = parseInitialStudents(INITIAL_CONFIG.initialStudents);
-  if (initialStudentsParsed.length > 0) {
-    // charger liste existante si présente
-    const existing = JSON.parse(localStorage.getItem('studentsList') || '[]');
-    initialStudentsParsed.forEach(s => {
-      const exists = existing.some(e => e.id === s.id && e.class === s.class);
-      if (!exists) existing.push(s);
-    });
-    studentsList = existing;
-    localStorage.setItem('studentsList', JSON.stringify(studentsList));
-    console.log('applyInitialConfiguration -> studentsList sauvegardé', studentsList);
-  } else {
-    console.log('applyInitialConfiguration -> aucun élève initial détecté');
-  }
-}
+    // --- Connexion élève ---
+    function handleStudentLogin(event) {
+      event.preventDefault();
+      const studentId = document.getElementById("studentId").value.trim().toLowerCase();
+      const studentClass = document.getElementById("studentClass").value;
+      const tempPassword = document.getElementById("studentTempPassword").value.trim();
+      const rememberMe = document.getElementById("rememberMe").checked;
+
+      const studentsList = JSON.parse(localStorage.getItem("studentsList") || "[]");
+      console.log("Attempt login:", { studentId, studentClass, tempPassword, studentsList });
+
+      const student = studentsList.find(s => s.id === studentId && s.class === studentClass);
+      if (!student) {
+        alert("Élève non trouvé.");
+        return;
+      }
+
+      if (!student.password) {
+        // première connexion
+        if (student.tempPassword === tempPassword) {
+          const newPassword = prompt("Définissez votre nouveau mot de passe :");
+          if (newPassword) {
+            student.password = newPassword;
+            localStorage.setItem("studentsList", JSON.stringify(studentsList));
+            alert("Mot de passe défini. Vous êtes connecté !");
+            // TODO : rediriger vers page élève
+          }
+        } else {
+          alert("Mot de passe provisoire incorrect.");
+        }
+      } else {
+        // connexion normale
+        if (student.password === tempPassword) {
+          if (rememberMe) {
+            localStorage.setItem("loggedInStudent", JSON.stringify(student));
+          }
+          alert("Connexion réussie !");
+          // TODO : rediriger vers page élève
+        } else {
+          alert("Mot de passe incorrect.");
+        }
+      }
+    }
+
+    window.onload = () => {
+      if (!localStorage.getItem("appInitialized")) {
+        applyInitialConfiguration();
+        localStorage.setItem("appInitialized", "true");
+      }
+      studentsList = JSON.parse(localStorage.getItem("studentsList") || "[]");
+    };
+  </script>
+</head>
+<body class="font-sans">
+  <h1 id="schoolTitle"></h1>
+
+  <!-- Connexion Élève -->
+  <div id="studentLoginPage">
+    <h2>Connexion Élève</h2>
+    <form id="studentLoginForm" onsubmit="handleStudentLogin(event)">
+      <div>
+        <label>Identifiant (nom.prenom)</label>
+        <input type="text" id="studentId" required>
+      </div>
+      <div>
+        <label>Classe</label>
+        <select id="studentClass" required>
+          <option value="6G1">6G1</option>
+          <option value="6G2">6G2</option>
+        </select>
+      </div>
+      <div>
+        <label>Mot de passe provisoire ou personnel</label>
+        <input type="password" id="studentTempPassword" required>
+      </div>
+      <div>
+        <input type="checkbox" id="rememberMe"> Se souvenir de moi
+      </div>
+      <button type="submit">Connexion</button>
+    </form>
+  </div>
+
+  <footer>
+    <a href="#" onclick="resetApplication()">Réinitialiser l'application (pour test)</a>
+  </footer>
+</body>
+</html>

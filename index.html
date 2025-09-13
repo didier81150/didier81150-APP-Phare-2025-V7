@@ -22,7 +22,7 @@
     const DEFAULT_LOGO_BASE64 = "";
     let studentsList = [];
 
-    // --- Parse amélioré et robuste ---
+    // --- Parse robuste ---
     function parseInitialStudents(studentString) {
       const students = [];
       const lines = studentString
@@ -47,7 +47,6 @@
         }
       });
 
-      console.log("parseInitialStudents ->", students);
       return students;
     }
 
@@ -69,9 +68,6 @@
         });
         studentsList = existing;
         localStorage.setItem("studentsList", JSON.stringify(studentsList));
-        console.log("applyInitialConfiguration -> studentsList sauvegardé", studentsList);
-      } else {
-        console.log("applyInitialConfiguration -> aucun élève initial détecté");
       }
     }
 
@@ -79,6 +75,12 @@
     function resetApplication() {
       localStorage.clear();
       location.reload();
+    }
+
+    // --- Gestion des pages ---
+    function showPage(pageId) {
+      document.querySelectorAll("section").forEach(sec => sec.style.display = "none");
+      document.getElementById(pageId).style.display = "block";
     }
 
     // --- Connexion élève ---
@@ -90,9 +92,8 @@
       const rememberMe = document.getElementById("rememberMe").checked;
 
       const studentsList = JSON.parse(localStorage.getItem("studentsList") || "[]");
-      console.log("Attempt login:", { studentId, studentClass, tempPassword, studentsList });
-
       const student = studentsList.find(s => s.id === studentId && s.class === studentClass);
+
       if (!student) {
         alert("Élève non trouvé.");
         return;
@@ -104,7 +105,8 @@
           if (newPassword) {
             student.password = newPassword;
             localStorage.setItem("studentsList", JSON.stringify(studentsList));
-            alert("Mot de passe défini. Vous êtes connecté !");
+            localStorage.setItem("loggedInStudent", JSON.stringify(student));
+            showPage("studentPage"); // ✅ Aller à la page élève
           }
         } else {
           alert("Mot de passe provisoire incorrect.");
@@ -114,19 +116,21 @@
           if (rememberMe) {
             localStorage.setItem("loggedInStudent", JSON.stringify(student));
           }
-          alert("Connexion réussie !");
+          showPage("studentPage"); // ✅ Aller à la page élève
         } else {
           alert("Mot de passe incorrect.");
         }
       }
     }
 
+    // --- Initialisation ---
     window.onload = () => {
       if (!localStorage.getItem("appInitialized")) {
         applyInitialConfiguration();
         localStorage.setItem("appInitialized", "true");
       }
       studentsList = JSON.parse(localStorage.getItem("studentsList") || "[]");
+      showPage("studentLoginPage"); // page par défaut
     };
   </script>
 </head>
@@ -134,7 +138,7 @@
   <h1 id="schoolTitle">Portail Élèves</h1>
 
   <!-- Connexion Élève -->
-  <div id="studentLoginPage">
+  <section id="studentLoginPage">
     <h2>Connexion Élève</h2>
     <form id="studentLoginForm" onsubmit="handleStudentLogin(event)">
       <label for="studentId">Identifiant (nom.prenom)</label>
@@ -155,7 +159,14 @@
 
       <button type="submit">Connexion</button>
     </form>
-  </div>
+  </section>
+
+  <!-- Page Élève -->
+  <section id="studentPage" style="display:none;">
+    <h2>Espace Élève</h2>
+    <p>Bienvenue dans votre espace personnel.</p>
+    <!-- ici tu peux réutiliser tes formulaires et menus existants -->
+  </section>
 
   <footer>
     <a href="#" onclick="resetApplication()">Réinitialiser l'application (pour test)</a>

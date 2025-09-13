@@ -3,6 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>Application Collège</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    label { display: block; margin-top: 10px; }
+    input, select, button { margin-top: 5px; padding: 6px; width: 100%; max-width: 300px; }
+    button { background: #2563eb; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1d4ed8; }
+    footer { margin-top: 30px; }
+  </style>
   <script>
     // --- Configuration initiale ---
     const INITIAL_CONFIG = {
@@ -12,38 +20,46 @@
       `
     };
     const DEFAULT_LOGO_BASE64 = "";
-
     let studentsList = [];
 
-    // --- Parse robuste ---
+    // --- Parse amélioré et robuste ---
     function parseInitialStudents(studentString) {
       const students = [];
-      const lines = studentString.split("\n").map(l => l.trim()).filter(l => l && !l.startsWith("//"));
+      const lines = studentString
+        .split("\n")
+        .map(l => l.trim())
+        .filter(l => l && !l.startsWith("//"));
+
       lines.forEach(line => {
         const parts = line.split(/\s+|,/).map(p => p.trim()).filter(Boolean);
         if (parts.length >= 3) {
+          const id = parts[0].toLowerCase();
+          const clazz = parts[1];
+          const temp = parts[2].trim();
           students.push({
-            id: parts[0].toLowerCase(),
-            class: parts[1],
-            tempPassword: parts[2],
+            id: id,
+            class: clazz,
+            tempPassword: temp,
             password: null
           });
         } else {
-          console.warn("Ligne ignorée:", line);
+          console.warn("Ligne élève ignorée (format incorrect) :", line);
         }
       });
+
       console.log("parseInitialStudents ->", students);
       return students;
     }
 
-    // --- Init app ---
+    // --- Appliquer config initiale ---
     function applyInitialConfiguration() {
-      if (INITIAL_CONFIG.schoolName) {
+      if (INITIAL_CONFIG.schoolName && INITIAL_CONFIG.schoolName !== "Collège [NOM DE VOTRE ÉTABLISSEMENT]") {
         localStorage.setItem("schoolName", INITIAL_CONFIG.schoolName);
       }
       if (DEFAULT_LOGO_BASE64) {
         localStorage.setItem("schoolLogo", DEFAULT_LOGO_BASE64);
       }
+
       const initialStudentsParsed = parseInitialStudents(INITIAL_CONFIG.initialStudents);
       if (initialStudentsParsed.length > 0) {
         const existing = JSON.parse(localStorage.getItem("studentsList") || "[]");
@@ -53,9 +69,13 @@
         });
         studentsList = existing;
         localStorage.setItem("studentsList", JSON.stringify(studentsList));
+        console.log("applyInitialConfiguration -> studentsList sauvegardé", studentsList);
+      } else {
+        console.log("applyInitialConfiguration -> aucun élève initial détecté");
       }
     }
 
+    // --- Réinitialiser application ---
     function resetApplication() {
       localStorage.clear();
       location.reload();
@@ -79,26 +99,22 @@
       }
 
       if (!student.password) {
-        // première connexion
         if (student.tempPassword === tempPassword) {
           const newPassword = prompt("Définissez votre nouveau mot de passe :");
           if (newPassword) {
             student.password = newPassword;
             localStorage.setItem("studentsList", JSON.stringify(studentsList));
             alert("Mot de passe défini. Vous êtes connecté !");
-            // TODO : rediriger vers page élève
           }
         } else {
           alert("Mot de passe provisoire incorrect.");
         }
       } else {
-        // connexion normale
         if (student.password === tempPassword) {
           if (rememberMe) {
             localStorage.setItem("loggedInStudent", JSON.stringify(student));
           }
           alert("Connexion réussie !");
-          // TODO : rediriger vers page élève
         } else {
           alert("Mot de passe incorrect.");
         }
@@ -114,31 +130,29 @@
     };
   </script>
 </head>
-<body class="font-sans">
-  <h1 id="schoolTitle"></h1>
+<body>
+  <h1 id="schoolTitle">Portail Élèves</h1>
 
   <!-- Connexion Élève -->
   <div id="studentLoginPage">
     <h2>Connexion Élève</h2>
     <form id="studentLoginForm" onsubmit="handleStudentLogin(event)">
-      <div>
-        <label>Identifiant (nom.prenom)</label>
-        <input type="text" id="studentId" required>
-      </div>
-      <div>
-        <label>Classe</label>
-        <select id="studentClass" required>
-          <option value="6G1">6G1</option>
-          <option value="6G2">6G2</option>
-        </select>
-      </div>
-      <div>
-        <label>Mot de passe provisoire ou personnel</label>
-        <input type="password" id="studentTempPassword" required>
-      </div>
-      <div>
+      <label for="studentId">Identifiant (nom.prenom)</label>
+      <input type="text" id="studentId" required>
+
+      <label for="studentClass">Classe</label>
+      <select id="studentClass" required>
+        <option value="6G1">6G1</option>
+        <option value="6G2">6G2</option>
+      </select>
+
+      <label for="studentTempPassword">Mot de passe provisoire ou personnel</label>
+      <input type="password" id="studentTempPassword" required>
+
+      <label>
         <input type="checkbox" id="rememberMe"> Se souvenir de moi
-      </div>
+      </label>
+
       <button type="submit">Connexion</button>
     </form>
   </div>
